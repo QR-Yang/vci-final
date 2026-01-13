@@ -20,6 +20,7 @@ def create_blue_noise_noise_map(width, height, r):
     from scipy.ndimage import convolve
     noise_grid = convolve(noise_grid, kernel)
     noise_grid = convolve(noise_grid, kernel)
+    noise_grid = convolve(noise_grid, kernel)
     #通过高斯模糊来把单独的噪音点传递到相邻区域
     flat = noise_grid.flatten()
     ranks = flat.argsort().argsort()
@@ -31,12 +32,12 @@ def dither_pipeline(image_path="david.jpg", width=640, height=640):
     img_gray = load_image_gray(image_path, width, height)
     blue_noise = create_blue_noise_noise_map(width, height, r=0.9)
     bn_result = (img_gray > blue_noise).astype(float)
-    plt.figure(figsize=(8, 5))
-    plt.subplot(2, 2, 1)
+    plt.figure(figsize=(12, 6))
+    plt.subplot(1, 2, 1)
     plt.title("Original Image")
     plt.imshow(img_gray, cmap='gray', vmin=0, vmax=1)
     plt.axis('off') 
-    plt.subplot(2, 2, 2)
+    plt.subplot(1, 2, 2)
     plt.title("Blue Noise Dithering")
     plt.imshow(bn_result, cmap='gray', vmin=0, vmax=1)
     plt.axis('off')  

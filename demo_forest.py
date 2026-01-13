@@ -15,7 +15,6 @@ def benchmark_efficiency():
         speed = duration / count * 1000
         print(f"{r:<10.3f} | {count:<10d} | {duration:<15.4f} | {speed:.10f} ms/point")
 def simulate_forest_generation():
-    print("\n--- 下游应用演示：程序化森林生成 ---")
     width, height = 1.0, 1.0
     r = 0.05
     forest_poisson = poisson_disk_sampling_2d(width, height, r)
@@ -23,7 +22,6 @@ def simulate_forest_generation():
     forest_random = []
     for i in range(num_trees):
         forest_random.append((random.random() * width, random.random() * height))
-    print(f"生成了 {num_trees} 棵树")
     fig, axes = plt.subplots(1, 2, figsize=(12, 6))
     def plot_stumps(ax, points, title, color):
         xs = [p[0] for p in points]
