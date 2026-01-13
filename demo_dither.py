@@ -8,11 +8,6 @@ def load_image_gray(filepath, width, height):
     img = img.resize((width, height))
     img_array = np.array(img).astype(float) / 255.0
     return img_array
-def generate_gradient_image(width, height):
-    x = np.linspace(0, 1, width)
-    y = np.linspace(0, 1, height)
-    xv, yv = np.meshgrid(x, y)
-    return xv
 def create_blue_noise_noise_map(width, height, r):
     points = poisson_disk_sampling_2d(float(width), float(height), r, k=30)
     noise_grid = np.zeros((height, width), dtype=float)
@@ -25,28 +20,24 @@ def create_blue_noise_noise_map(width, height, r):
     from scipy.ndimage import convolve
     noise_grid = convolve(noise_grid, kernel)
     noise_grid = convolve(noise_grid, kernel)
-    noise_grid = convolve(noise_grid, kernel)
-    mean_val = np.mean(noise_grid)
-    max_val = np.max(noise_grid) if np.max(noise_grid) > 0 else 1.0
-    min_val = np.min(noise_grid)
-    if max_val - min_val > 0:
-        noise_grid = (noise_grid - min_val) / (max_val - min_val)
-        noise_grid = noise_grid - 0.5
-        noise_grid = noise_grid * 2.0
+    #通过高斯模糊来把单独的噪音点传递到相邻区域
+    flat = noise_grid.flatten()
+    ranks = flat.argsort().argsort()
+    #得到原始数组中每个元素在从小到大排序中的排名,只计算相对值
+    uniform_noise = ranks.astype(float) / (len(flat) - 1)
+    noise_grid = uniform_noise.reshape((height, width))
     return noise_grid
-def dither_pipeline(image_path="david.jpg", width=400, height=400):
+def dither_pipeline(image_path="david.jpg", width=640, height=640):
     img_gray = load_image_gray(image_path, width, height)
-    blue_noise = create_blue_noise_noise_map(width, height, r=1.2)
-    strength = 0.5
-    bn_dithering = img_gray + blue_noise * strength
-    bn_result = (bn_dithering > 0.5).astype(float)
+    blue_noise = create_blue_noise_noise_map(width, height, r=0.9)
+    bn_result = (img_gray > blue_noise).astype(float)
     plt.figure(figsize=(8, 5))
     plt.subplot(2, 2, 1)
-    plt.title("Original Image (Gray)")
+    plt.title("Original Image")
     plt.imshow(img_gray, cmap='gray', vmin=0, vmax=1)
     plt.axis('off')
     plt.subplot(2, 2, 2)
-    plt.title("Blue Noise Dithering (Our Algorithm)")
+    plt.title("Blue Noise Dithering")
     plt.imshow(bn_result, cmap='gray', vmin=0, vmax=1)
     plt.axis('off')  
     plt.tight_layout()

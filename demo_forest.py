@@ -3,7 +3,7 @@ import random
 import matplotlib.pyplot as plt
 from sample_2D import poisson_disk_sampling_2d
 def benchmark_efficiency():
-    print("\n--- 1. 算法效率基准测试 ---")
+    print("\n--- 算法效率基准测试 ---")
     width, height = 1.0, 1.0
     test_radii = [0.1, 0.05, 0.025, 0.015] 
     for r in test_radii:
@@ -11,11 +11,11 @@ def benchmark_efficiency():
         points = poisson_disk_sampling_2d(width, height, r, k=30)
         end_time = time.time()
         duration = end_time - start_time
-        count = len(points)    
-        print(f"{r:<10.3f} | {count:<10d} | {duration:<15.4f}")
-    print("结论：算法能够在极短时间内生成数千个高质量采样点，呈线性时间复杂度 O(N)。")
+        count = len(points)
+        speed = duration / count * 1000
+        print(f"{r:<10.3f} | {count:<10d} | {duration:<15.4f} | {speed:.10f} ms/point")
 def simulate_forest_generation():
-    print("\n--- 2. 下游应用演示：程序化森林生成 ---")
+    print("\n--- 下游应用演示：程序化森林生成 ---")
     width, height = 1.0, 1.0
     r = 0.05
     forest_poisson = poisson_disk_sampling_2d(width, height, r)
@@ -23,7 +23,7 @@ def simulate_forest_generation():
     forest_random = []
     for i in range(num_trees):
         forest_random.append((random.random() * width, random.random() * height))
-    print(f"生成了 {num_trees} 棵树。正在绘图对比...")
+    print(f"生成了 {num_trees} 棵树")
     fig, axes = plt.subplots(1, 2, figsize=(12, 6))
     def plot_stumps(ax, points, title, color):
         xs = [p[0] for p in points]
@@ -36,9 +36,8 @@ def simulate_forest_generation():
         ax.set_ylim(0, height)
         ax.set_aspect('equal')
         ax.set_title(title)
-    plot_stumps(axes[0], forest_random, f"Pure Random Generation\n(Overlaps & Gaps)", 'red')
-    plot_stumps(axes[1], forest_poisson, f"Poisson Disk Generation\n(Evenly Distributed, No Overlap)", 'green')
-    plt.suptitle("Application Scenario: Procedural Forest Generation")
+    plot_stumps(axes[0], forest_random, f"Pure Random Generation", 'red')
+    plot_stumps(axes[1], forest_poisson, f"Poisson Disk Generation", 'green')
     plt.show()
 if __name__ == "__main__":
     benchmark_efficiency()
