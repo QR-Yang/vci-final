@@ -92,4 +92,5 @@ if __name__ == "__main__":
     ax.set_ylim(0, H)
     ax.set_zlim(0, D)
     ax.set_title(f"Poisson Disk Sampling 3D (N={len(pts)})")
+    plt.savefig("poisson_disk_sampling_3D.png")
     plt.show()

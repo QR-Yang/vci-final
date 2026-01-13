@@ -69,4 +69,5 @@ if __name__ == "__main__":
     plt.ylim(0, H)
     plt.gca().set_aspect('equal')
     plt.title(f"Poisson Disk Sampling 2D (N={len(pts)})")
+    plt.savefig("poisson_disk_sampling_2D.png")
     plt.show()
